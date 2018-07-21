@@ -1,0 +1,6 @@
+ex_icons.settings:
+  type: config_object
+  mapping:
+    path:
+      type: string
+      label: 'Path to the SVG sprite sheet that is used.'

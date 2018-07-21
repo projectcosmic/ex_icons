@@ -1,4 +1,4 @@
-name: External Use Icons
+name: External-use Icons
 description: Adds an API to manage and use icons expressed in a SVG sprite sheet.
 type: module
 core: 8.x
