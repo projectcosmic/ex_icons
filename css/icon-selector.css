@@ -1,0 +1,48 @@
+/**
+ * @file
+ * Icon select form element.
+ */
+
+.icon-selector {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -3px;
+}
+
+.icon-selector > .form-item {
+  margin: 3px;
+}
+
+.icon-selector .option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  border: 1px solid #b8b8b8;
+  padding: 0.2em;
+  background-color: transparent;
+  height: 50px;
+  width: 50px;
+}
+
+/* Element interaction states */
+.icon-selector .option:hover,
+.icon-selector :focus + .option,
+.icon-selector :checked + .option {
+  border-color: #0071b8;
+}
+.icon-selector :focus + .option {
+  border-color: #40b6ff;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05), 0 0 8px #40b6ff;
+}
+.icon-selector :checked + .option {
+  color: #0071b8;
+  box-shadow: 0 0 0 1px #0071b8;
+}
+
+.icon-selector__icon {
+  max-width: 66%;
+  max-height: 66%;
+  fill: currentColor;
+}

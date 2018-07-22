@@ -1,0 +1,4 @@
+icon-selector:
+  css:
+    component:
+      css/icon-selector.css: {}
