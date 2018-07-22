@@ -121,7 +121,7 @@ class ExIconDefaultFormatter extends FormatterBase {
       }
 
       $elements[$delta] = [
-        '#theme' => 'icon',
+        '#theme' => 'ex_icon',
         '#id' => $item->value,
         '#attributes' => array_filter($attributes),
       ];

@@ -24,7 +24,7 @@ class ExIconSelectWidget extends WidgetBase {
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $value = [
-      '#type' => 'icon_select',
+      '#type' => 'ex_icon_select',
       '#default_value' => $items[$delta]->value,
     ];
 
