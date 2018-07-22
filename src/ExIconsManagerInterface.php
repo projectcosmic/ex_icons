@@ -28,6 +28,22 @@ interface ExIconsManagerInterface extends CacheableDependencyInterface {
   public function getInlineDefs();
 
   /**
+   * Returns the URL to the icon sprite sheet suitable for HTML usage.
+   *
+   * @return string
+   *   The URL relative to the website root.
+   */
+  public function getSheetUrl();
+
+  /**
+   * Returns a cache-busting hash of the icon data.
+   *
+   * @return string
+   *   The hash.
+   */
+  public function getHash();
+
+  /**
    * Invalidates any caches and rebuilds icon data.
    */
   public function rebuild();

@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * @file
+ * External-use icons module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function ex_icons_theme() {
+  return [
+    'ex_icon' => [
+      'variables' => [
+        'id' => NULL,
+        'attributes' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for svg icon templates.
+ *
+ * Default template: ex-icon.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - id: The XML id value of the symbol element in the SVG sprite sheet.
+ *   - attributes: The HTML attributes to apply to the SVG element.
+ */
+function template_preprocess_ex_icon(array &$variables) {
+  $icons_manager = \Drupal::service('ex_icons.icons_manager');
+  $variables['sheet_url'] = $icons_manager->getSheetUrl();
+
+  // Default role to be img.
+  if (!isset($variables['attributes']['role'])) {
+    $variables['attributes']['role'] = 'img';
+  }
+
+  $dimension_keys = &drupal_static(__FUNCTION__, array_flip(['width', 'height']));
+  $dimension_attributes = array_intersect_key($variables['attributes'], $dimension_keys);
+
+  // Calculate other dimension if only one has been specified:
+  if (count($dimension_attributes) == 1) {
+    $icon_list = $icons_manager->getIcons();
+
+    $source_icon_data = isset($icon_list[$variables['id']]) ?
+      $icon_list[$variables['id']] :
+      ['width' => 1, 'height' => 1];
+
+    $aspect_ratio = $source_icon_data['height'] / $source_icon_data['width'];
+    $existing_length = reset($dimension_attributes);
+    $missing_length_key = key(array_diff_key($dimension_keys, $dimension_attributes));
+
+    // Flip aspect ratio value for calculating width.
+    if ($missing_length_key == 'width') {
+      $aspect_ratio = 1 / $aspect_ratio;
+    }
+
+    $variables['attributes'][$missing_length_key] = round($existing_length * $aspect_ratio, 2);
+  }
+
+  $variables['hash'] = $icons_manager->getHash();
+
+  \Drupal::service('renderer')->addCacheableDependency($variables, $icons_manager);
+}

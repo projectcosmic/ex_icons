@@ -74,6 +74,24 @@ class ExIconsManager implements ExIconsManagerInterface {
   /**
    * {@inheritdoc}
    */
+  public function getSheetUrl() {
+    return file_url_transform_relative(file_create_url($this->config->get('path')));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getHash() {
+    if (!isset($this->data)) {
+      $this->discoverIconData();
+    }
+
+    return $this->data['hash'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function rebuild() {
     $this->cache->delete(self::CACHE_ID);
   }
@@ -88,6 +106,7 @@ class ExIconsManager implements ExIconsManagerInterface {
     $data = [
       'icons' => [],
       'inline_defs' => '',
+      'hash' => '',
     ];
 
     if ($cache = $this->cache->get(self::CACHE_ID)) {
@@ -116,13 +135,15 @@ class ExIconsManager implements ExIconsManagerInterface {
           $data['icons'][$id] = [
             'width'  => $viewbox[2],
             'height' => $viewbox[3],
-            'title' => $title ?: str_replace('-', ' ', ucfirst($id)),
+            'title' => $title ? $title->nodeValue : str_replace('-', ' ', ucfirst($id)),
           ];
         }
 
         foreach ($dom->getElementsByTagName('defs') as $def) {
           $data['inline_defs'] .= $dom->saveXML($def);
         }
+
+        $data['hash'] = substr(hash_file('sha512', $sheet), 0, 16);
 
         $this->cache->set(self::CACHE_ID, $data, $this->getCacheMaxAge(), $this->getCacheTags());
       }
