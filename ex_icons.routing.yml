@@ -1,5 +1,5 @@
 ex_icons.settings:
-  path: '/admin/config/media/ex-icon-settings'
+  path: '/admin/config/media/ex-icons-settings'
   defaults:
     _form: '\Drupal\ex_icons\Form\ExIconsSettingsForm'
     _title: 'External-use Icons Settings'
