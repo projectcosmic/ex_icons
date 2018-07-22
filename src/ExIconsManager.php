@@ -11,6 +11,11 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 class ExIconsManager implements ExIconsManagerInterface {
 
   /**
+   * Cache ID used to store icon data.
+   */
+  const CACHE_ID = 'ex_icons_data';
+
+  /**
    * Cache backend service.
    *
    * @var \Drupal\Core\Cache\CacheBackendInterface
@@ -67,6 +72,13 @@ class ExIconsManager implements ExIconsManagerInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function rebuild() {
+    $this->cache->delete(self::CACHE_ID);
+  }
+
+  /**
    * Discovers the icon data from the sprite sheet file.
    *
    * @return array
@@ -78,8 +90,7 @@ class ExIconsManager implements ExIconsManagerInterface {
       'inline_defs' => '',
     ];
 
-    $cid = 'ex_icons:data';
-    if ($cache = $this->cache->get($cid)) {
+    if ($cache = $this->cache->get(self::CACHE_ID)) {
       $data = $cache->data;
     }
     else {
@@ -113,7 +124,7 @@ class ExIconsManager implements ExIconsManagerInterface {
           $data['inline_defs'] .= $dom->saveXML($def);
         }
 
-        $this->cache->set($cid, $data, $this->getCacheMaxAge(), $this->getCacheTags());
+        $this->cache->set(self::CACHE_ID, $data, $this->getCacheMaxAge(), $this->getCacheTags());
       }
     }
 

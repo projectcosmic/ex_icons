@@ -27,4 +27,9 @@ interface ExIconsManagerInterface extends CacheableDependencyInterface {
    */
   public function getInlineDefs();
 
+  /**
+   * Invalidates any caches and rebuilds icon data.
+   */
+  public function rebuild();
+
 }
