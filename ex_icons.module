@@ -93,3 +93,27 @@ function ex_icons_preprocess_form_element_label(&$variables) {
     $variables['title'] = $variables['title']['#markup'];
   }
 }
+
+/**
+ * Implements hook_page_bottom().
+ */
+function ex_icons_icons_page_bottom(array &$page_bottom) {
+  $icons_manager = \Drupal::service('ex_icons.icons_manager');
+
+  $defs = [];
+
+  $inline_defs = $icons_manager->getInlineDefs();
+  if ($inline_defs) {
+    $defs = [
+      '#type' => 'inline_template',
+      '#template' => '<svg{{ attributes }}>{{ defs|raw }}</svg>',
+      '#context' => [
+        'attributes' => new Attribute(['class' => ['visually-hidden']]),
+        'defs' => $inline_defs,
+      ],
+    ];
+  }
+
+  \Drupal::service('renderer')->addCacheableDependency($defs, $icons_manager);
+  $page_bottom['ex_icons_inline_defs'] = $defs;
+}
