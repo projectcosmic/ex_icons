@@ -117,3 +117,14 @@ function ex_icons_icons_page_bottom(array &$page_bottom) {
   \Drupal::service('renderer')->addCacheableDependency($defs, $icons_manager);
   $page_bottom['ex_icons_inline_defs'] = $defs;
 }
+
+/**
+ * Implements hook_page_attachments().
+ */
+function ex_icons_page_attachments(array &$attachments) {
+  $icons_manager = \Drupal::service('ex_icons.icons_manager');
+  $attachments['#attached']['drupalSettings']['exIcons'] = [
+    'basePath' => $icons_manager->getSheetUrl(),
+    'hash' => $icons_manager->getHash(),
+  ];
+}
