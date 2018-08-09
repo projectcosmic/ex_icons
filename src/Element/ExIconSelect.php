@@ -4,9 +4,6 @@ namespace Drupal\ex_icons\Element;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\Radios;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\ex_icons\ExIconsManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a form element for selecting an icon.
@@ -24,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @FormElement("ex_icon_select")
  */
-class ExIconSelect extends Radios implements ContainerFactoryPluginInterface {
+class ExIconSelect extends Radios {
 
   /**
    * Empty value for internal logic use.
@@ -32,71 +29,18 @@ class ExIconSelect extends Radios implements ContainerFactoryPluginInterface {
   const EMPTY_VALUE = '__empty__';
 
   /**
-   * The icons manager service.
+   * Icon options.
    *
-   * @var \Drupal\ex_icons\ExIconsManagerInterface
+   * @var string[]
    */
-  protected $iconsManager;
-
-  /**
-   * Constructs an IconSelect object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\ex_icons\ExIconsManagerInterface $icons_manager
-   *   The icons manager service.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExIconsManagerInterface $icons_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->iconsManager = $icons_manager;
-  }
-
-  /**
-   * Creates an instance of the plugin.
-   *
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   *   The container to pull out services used in the plugin.
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin ID for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   *
-   * @return static
-   *   Returns an instance of this plugin.
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('ex_icons.icons_manager')
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getInfo() {
-    $options = [];
-    foreach ($this->iconsManager->getIcons() as $id => $icon_data) {
-      $options[$id] = $icon_data['title'];
-    }
-
-    return [
-      '#options' => $options,
-    ] + parent::getInfo();
-  }
+  protected static $options;
 
   /**
    * {@inheritdoc}
    */
   public static function processRadios(&$element, FormStateInterface $form_state, &$complete_form) {
+    $element['#options'] = self::getOptions();
+
     // If not required:
     if (!isset($element['#states']['required']) && !$element['#required']) {
       // Add empty value option.
@@ -134,6 +78,8 @@ class ExIconSelect extends Radios implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
+    $element['#options'] = self::getOptions();
+
     // Revert to normal empty value handling.
     if ($input == self::EMPTY_VALUE) {
       // Work-around to get past value/element validation.
@@ -143,6 +89,26 @@ class ExIconSelect extends Radios implements ContainerFactoryPluginInterface {
     }
 
     return parent::valueCallback($element, $input, $form_state);
+  }
+
+  /**
+   * Gets the icon options.
+   *
+   * @return string[]
+   *   The list of icon titles keyed by their ID.
+   *
+   * @see \Drupal\ex_icons\ExIconsManagerInterface::getIcons()
+   */
+  protected static function getOptions() {
+    if (!isset(self::$options)) {
+      self::$options = [];
+
+      foreach (\Drupal::service('ex_icons.icons_manager')->getIcons() as $id => $icon_data) {
+        self::$options[$id] = $icon_data['title'];
+      }
+    }
+
+    return self::$options;
   }
 
 }
