@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 [Unreleased]
 ------------
 
+[1.0.0-beta3] - 2018-08-09
+--------------------------
+### Fixed
+- Fix icon selector choices not updating
+
 [1.0.0-beta2] - 2018-07-24
 --------------------------
 ### Added
