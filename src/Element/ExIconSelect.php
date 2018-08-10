@@ -24,11 +24,6 @@ use Drupal\Core\Render\Element\Radios;
 class ExIconSelect extends Radios {
 
   /**
-   * Empty value for internal logic use.
-   */
-  const EMPTY_VALUE = '__empty__';
-
-  /**
    * Icon options.
    *
    * @var string[]
@@ -45,12 +40,12 @@ class ExIconSelect extends Radios {
     if (!isset($element['#states']['required']) && !$element['#required']) {
       // Add empty value option.
       $element['#options'] = [
-        self::EMPTY_VALUE => t('No icon'),
+        '' => t('No icon'),
       ] + $element['#options'];
 
       // Set to empty value if no default value set or previously nulled value.
       if (!isset($element['#default_value']) || $element['#default_value'] === '') {
-        $element['#default_value'] = self::EMPTY_VALUE;
+        $element['#default_value'] = '';
       }
     }
 
@@ -59,7 +54,7 @@ class ExIconSelect extends Radios {
     foreach ($element['#options'] as $key => $label) {
       $element[$key]['#attributes']['class'][] = 'visually-hidden';
 
-      if ($key != self::EMPTY_VALUE) {
+      if ($key != '') {
         $element[$key]['#title'] = [
           '#theme' => 'ex_icon',
           '#id' => $key,
@@ -79,15 +74,6 @@ class ExIconSelect extends Radios {
    */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
     $element['#options'] = self::getOptions();
-
-    // Revert to normal empty value handling.
-    if ($input == self::EMPTY_VALUE) {
-      // Work-around to get past value/element validation.
-      $element['#options'][''] = '';
-
-      return '';
-    }
-
     return parent::valueCallback($element, $input, $form_state);
   }
 
