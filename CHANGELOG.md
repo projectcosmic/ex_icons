@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 [Unreleased]
 ------------
 
+[1.0.0-beta5] - 2018-09-13
+--------------------------
+### Added
+- Add full URL to drupalSettings
+
 [1.0.0-beta4] - 2018-08-10
 --------------------------
 ### Fixed
