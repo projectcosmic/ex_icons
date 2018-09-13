@@ -126,5 +126,6 @@ function ex_icons_page_attachments(array &$attachments) {
   $attachments['#attached']['drupalSettings']['exIcons'] = [
     'basePath' => $icons_manager->getSheetUrl(),
     'hash' => $icons_manager->getHash(),
+    'full' => $icons_manager->getSheetUrl() . '?' . $icons_manager->getHash(),
   ];
 }
