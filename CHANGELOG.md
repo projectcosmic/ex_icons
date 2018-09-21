@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 [Unreleased]
 ------------
 
+[1.0.0-beta6] - 2018-09-21
+--------------------------
+### Added
+- Add schema for icon field type
+
 [1.0.0-beta5] - 2018-09-13
 --------------------------
 ### Added
