@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the External-use Icons module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function ex_icons_uninstall() {
+  ex_icons_get_manager()->rebuild();
+  variable_del(ExIconsManager::PATH_SETTING_NAME);
+}
