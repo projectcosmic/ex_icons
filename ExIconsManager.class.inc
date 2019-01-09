@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\ex_icons;
-
-use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
+/**
+ * @file
+ * Contains the icon manager class definition.
+ */
 
 /**
  * Service helping with querying icon data from a sprite sheet.
@@ -16,18 +16,9 @@ class ExIconsManager implements ExIconsManagerInterface {
   const CACHE_ID = 'ex_icons_data';
 
   /**
-   * Cache backend service.
-   *
-   * @var \Drupal\Core\Cache\CacheBackendInterface
+   * Variable name of the sprite path setting.
    */
-  protected $cache;
-
-  /**
-   * A config object for the icons configuration.
-   *
-   * @var \Drupal\Core\Config\Config
-   */
-  protected $config;
+  const PATH_SETTING_NAME = 'ex_icons_path';
 
   /**
    * The set of icon data.
@@ -35,19 +26,6 @@ class ExIconsManager implements ExIconsManagerInterface {
    * @var array
    */
   protected $data;
-
-  /**
-   * Constructs a ExIconsManager object.
-   *
-   * @param \Drupal\Core\Cache\CacheBackendInterface $cache
-   *   Cache backend.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   A config factory for retrieving required config objects.
-   */
-  public function __construct(CacheBackendInterface $cache, ConfigFactoryInterface $config_factory) {
-    $this->cache = $cache;
-    $this->config = $config_factory->get('ex_icons.settings');
-  }
 
   /**
    * {@inheritdoc}
@@ -75,7 +53,7 @@ class ExIconsManager implements ExIconsManagerInterface {
    * {@inheritdoc}
    */
   public function getSheetUrl() {
-    return file_url_transform_relative(file_create_url($this->config->get('path')));
+    return check_url(base_path() . variable_get(self::PATH_SETTING_NAME));
   }
 
   /**
@@ -93,7 +71,7 @@ class ExIconsManager implements ExIconsManagerInterface {
    * {@inheritdoc}
    */
   public function rebuild() {
-    $this->cache->delete(self::CACHE_ID);
+    cache_clear_all(self::CACHE_ID, 'cache');
   }
 
   /**
@@ -109,11 +87,11 @@ class ExIconsManager implements ExIconsManagerInterface {
       'hash' => '',
     ];
 
-    if ($cache = $this->cache->get(self::CACHE_ID)) {
+    if ($cache = cache_get(self::CACHE_ID)) {
       $data = $cache->data;
     }
     else {
-      $sheet = $this->config->get('path');
+      $sheet = variable_get(self::PATH_SETTING_NAME);
       if ($sheet && file_exists($sheet)) {
         $dom = new \DOMDocument();
         $dom->load($sheet);
@@ -145,33 +123,12 @@ class ExIconsManager implements ExIconsManagerInterface {
 
         $data['hash'] = substr(hash_file('sha512', $sheet), 0, 16);
 
-        $this->cache->set(self::CACHE_ID, $data, $this->getCacheMaxAge(), $this->getCacheTags());
+        cache_set(self::CACHE_ID, $data, 'cache', CACHE_PERMANENT);
       }
     }
 
     $this->data = $data;
     return $this->data;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheContexts() {
-    return $this->config->getCacheContexts();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheMaxAge() {
-    return CacheBackendInterface::CACHE_PERMANENT;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheTags() {
-    return $this->config->getCacheTags();
   }
 
 }

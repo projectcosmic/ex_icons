@@ -6,36 +6,75 @@
  */
 
 /**
- * Implements hook_theme().
+ * Gets the icon manager singleton.
+ *
+ * Use the returned object when requiring data about icons.
+ *
+ * @return ExIconsManager
+ *   The icon manager singleton object.
  */
-function ex_icons_theme() {
-  return [
-    'ex_icon' => [
-      'variables' => [
-        'id' => NULL,
-        'attributes' => [],
-      ],
-    ],
-  ];
+function ex_icons_get_manager() {
+  static $manager;
+
+  if (!isset($manager)) {
+    $manager = new ExIconsManager();
+  }
+
+  return $manager;
 }
 
 /**
- * Prepares variables for svg icon templates.
- *
- * Default template: ex-icon.html.twig.
- *
- * @param array $variables
- *   An associative array containing:
- *   - id: The XML id value of the symbol element in the SVG sprite sheet.
- *   - attributes: The HTML attributes to apply to the SVG element.
+ * Implements hook_menu().
  */
-function template_preprocess_ex_icon(array &$variables) {
-  $icons_manager = \Drupal::service('ex_icons.icons_manager');
+function ex_icons_menu() {
+  $items['admin/config/media/ex-icons-settings'] = array(
+    'title' => 'External-use Icons Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ex_icons_settings_form'),
+    'access arguments' => array('administer ex icons settings'),
+    'file' => 'ex_icons.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ex_icons_permission() {
+  return array(
+    'administer ex icons settings' => array(
+      'title' => t('Administer External-use Icons settings'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ex_icons_theme() {
+  return array(
+    'ex_icon' => array(
+      'variables' => array(
+        'id' => NULL,
+        'attributes' => array(),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements template_preprocess_HOOK() for theme_ex_icon().
+ */
+function template_preprocess_ex_icon(&$variables) {
+  $icons_manager = ex_icons_get_manager();
   $variables['sheet_url'] = $icons_manager->getSheetUrl();
 
-  // Default role to be img.
+  // Add a role attribute if it does not exist.
   if (!isset($variables['attributes']['role'])) {
-    $variables['attributes']['role'] = 'img';
+    $variables['attributes']['role'] = isset($variables['attributes']['title'])
+      ? 'img'
+      : 'presentation';
   }
 
   $dimension_keys = &drupal_static(__FUNCTION__, array_flip(['width', 'height']));
@@ -62,70 +101,35 @@ function template_preprocess_ex_icon(array &$variables) {
   }
 
   $variables['hash'] = $icons_manager->getHash();
-
-  \Drupal::service('renderer')->addCacheableDependency($variables, $icons_manager);
 }
 
 /**
- * Implements hook_preprocess_HOOK() for radios.html.twig.
+ * Returns HTML for an external-use SVG icon.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - attributes: HTML attributes array to apply to the SVG element.
+ *   - sheet_url: The url to the icon sprite sheet.
+ *   - hash: Content hash of the sprite sheet for version cache-busting.
+ *   - id: The ID of the icon to use.
+ *
+ * @ingroup themeable
  */
-function ex_icons_preprocess_radios(&$variables) {
-  if ($variables['element']['#type'] == 'ex_icon_select') {
-    $variables['attributes']['class'][] = 'icon-selector';
-    $variables['#attached']['library'][] = 'ex_icons/icon-selector';
+function theme_ex_icon(array &$variables) {
+  return '<svg' . drupal_attributes($variables['attributes']) . '>'
+    . '<use xlink:href="' . "$variables[sheet_url]?$variables[hash]#$variables[id]" . '"/>'
+    . '</svg>';
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function ex_icons_page_build(&$page) {
+  if ($inline_defs = ex_icons_get_manager()->getInlineDefs()) {
+    $page['page_top']['ex_icons_inline_defs'] = array(
+      '#prefix' => '<svg class="element-invisible">',
+      '#markup' => $inline_defs,
+      '#suffix' => '</svg>',
+    );
   }
-}
-
-/**
- * Implements hook_preprocess_HOOK() for form-element-label.html.twig.
- */
-function ex_icons_preprocess_form_element_label(&$variables) {
-  // If #markup is an array, then check whether it is an SVG icon render array
-  // from ex_icon_select form element.
-  if (
-    // Check if markup is an array.
-    isset($variables['title']['#markup']) &&
-    is_array($variables['title']['#markup']) &&
-    // Check if the array is for an icon.
-    isset($variables['title']['#markup']['#theme']) &&
-    $variables['title']['#markup']['#theme'] == 'ex_icon'
-  ) {
-    $variables['title'] = $variables['title']['#markup'];
-  }
-}
-
-/**
- * Implements hook_page_bottom().
- */
-function ex_icons_icons_page_bottom(array &$page_bottom) {
-  $icons_manager = \Drupal::service('ex_icons.icons_manager');
-
-  $defs = [];
-
-  $inline_defs = $icons_manager->getInlineDefs();
-  if ($inline_defs) {
-    $defs = [
-      '#type' => 'inline_template',
-      '#template' => '<svg{{ attributes }}>{{ defs|raw }}</svg>',
-      '#context' => [
-        'attributes' => new Attribute(['class' => ['visually-hidden']]),
-        'defs' => $inline_defs,
-      ],
-    ];
-  }
-
-  \Drupal::service('renderer')->addCacheableDependency($defs, $icons_manager);
-  $page_bottom['ex_icons_inline_defs'] = $defs;
-}
-
-/**
- * Implements hook_page_attachments().
- */
-function ex_icons_page_attachments(array &$attachments) {
-  $icons_manager = \Drupal::service('ex_icons.icons_manager');
-  $attachments['#attached']['drupalSettings']['exIcons'] = [
-    'basePath' => $icons_manager->getSheetUrl(),
-    'hash' => $icons_manager->getHash(),
-    'full' => $icons_manager->getSheetUrl() . '?' . $icons_manager->getHash(),
-  ];
 }

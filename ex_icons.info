@@ -1,0 +1,7 @@
+name = External-use Icons
+description = Adds an API to manage and use icons expressed in a SVG sprite sheet.
+core = 7.x
+version = 7.x-1.0
+project = ex_icons
+files[] = ExIconsManagerInterface.interface.inc
+files[] = ExIconsManager.class.inc

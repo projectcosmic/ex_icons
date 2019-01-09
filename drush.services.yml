@@ -1,6 +1,0 @@
-services:
-  ex_icons.commands:
-    class: \Drupal\ex_icons\Commands\ExIconsCommands
-    arguments: ['@ex_icons.icons_manager']
-    tags:
-      - { name: drush.command }

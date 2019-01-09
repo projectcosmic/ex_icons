@@ -1,13 +1,14 @@
 <?php
 
-namespace Drupal\ex_icons;
-
-use Drupal\Core\Cache\CacheableDependencyInterface;
+/**
+ * @file
+ * Contains the icon manager interface definition.
+ */
 
 /**
  * Provides an interface for querying icon data from a sprite sheet.
  */
-interface ExIconsManagerInterface extends CacheableDependencyInterface {
+interface ExIconsManagerInterface {
 
   /**
    * Returns the list of icons.

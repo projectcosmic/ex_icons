@@ -1,9 +1,0 @@
-services:
-  ex_icons.icons_manager:
-    class: Drupal\ex_icons\ExIconsManager
-    arguments: ['@cache.discovery', '@config.factory']
-
-  ex_icons.twig_extension:
-    class: Drupal\ex_icons\TwigExtension
-    tags:
-      - { name: twig.extension }
