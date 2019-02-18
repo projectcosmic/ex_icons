@@ -1,0 +1,8 @@
+name: External-use Icons Menu
+description: Add icons to menu items.
+type: module
+core: 8.x
+project: ex_icons
+dependencies:
+  - drupal:menu_link_content
+  - ex_icons:ex_icons
