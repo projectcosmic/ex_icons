@@ -1,0 +1,9 @@
+# Schema for configuration files of the External-use Icons Block module.
+
+block.block.*.third_party.ex_icons_block:
+  type: mapping
+  label: 'Block icon settings'
+  mapping:
+    title_icon:
+      type: string
+      label: 'Title icon'

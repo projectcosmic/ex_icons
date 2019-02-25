@@ -1,0 +1,8 @@
+name: External-use Icons Block
+description: Integrates icons into blocks.
+type: module
+core: 8.x
+project: ex_icons
+dependencies:
+  - drupal:block
+  - ex_icons:ex_icons

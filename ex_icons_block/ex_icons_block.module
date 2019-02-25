@@ -1,0 +1,83 @@
+<?php
+
+/**
+ * @file
+ * Integrates icons into blocks.
+ */
+
+use Drupal\block\BlockInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter() for block_form.
+ */
+function ex_icons_block_form_block_form_alter(&$form, FormStateInterface $form_state) {
+  $block = $form_state->getFormObject()->getEntity();
+
+  _ex_icons_block_array_insert_after_key(
+    $form['settings'],
+    'label_display',
+    [
+      'title_icon' => [
+        '#type' => 'ex_icon_select',
+        '#title' => t('Title Icon'),
+        '#description' => t('Optionally set an icon to use in place of text for the block title.'),
+        '#default_value' => $block->getThirdPartySetting('ex_icons_block', 'title_icon'),
+        '#states' => [
+          'visible' => [
+            ':input[name="settings[label_display]"]' => ['checked' => TRUE],
+          ],
+        ],
+      ],
+    ]
+  );
+
+  // Add callback for saving custom values to the config entity.
+  $form['#entity_builders'][] = 'ex_icons_block_block_builder';
+}
+
+/**
+ * Maps additional form values to a block config entity.
+ *
+ * @see ex_icons_block_form_block_form_alter()
+ */
+function ex_icons_block_block_builder($entity_type, BlockInterface $block, $form, FormStateInterface $form_state) {
+  $icon = $form_state->getValue(['settings', 'title_icon']);
+
+  $method = $icon ? 'setThirdPartySetting' : 'unsetThirdPartySetting';
+  $block->{$method}('ex_icons_block', 'title_icon', $icon);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for block.html.twig.
+ */
+function ex_icons_block_preprocess_block(&$variables) {
+  $variables['title_icon'] = \Drupal::entityTypeManager()
+    ->getStorage('block')
+    ->load($variables['elements']['#id'])
+    ->getThirdPartySetting('ex_icons_block', 'title_icon');
+}
+
+/**
+ * Inserts an array into another array at a specified key position.
+ *
+ * @param array &$array
+ *   The target array to insert into.
+ * @param string $target_key
+ *   The target key to insert an array after.
+ * @param array $insert_array
+ *   The array to insert into the array.
+ */
+function _ex_icons_block_array_insert_after_key(array &$array, $target_key, array $insert_array) {
+  // Insert after key if it exists:
+  if ($target_index = array_search($target_key, array_keys($array))) {
+    $insert_index = $target_index + 1;
+    $array = array_slice($array, 0, $insert_index, TRUE)
+     + $insert_array
+     + array_slice($array, $insert_index, count($array) - 1, TRUE);
+  }
+  // Otherwise append:
+  else {
+    $array = array_merge($array, $insert_array);
+  }
+}
