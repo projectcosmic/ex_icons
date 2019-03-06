@@ -78,6 +78,21 @@ class ExIconDefaultFormatter extends FormatterBase {
   }
 
   /**
+   * Validates dimension settings for formatter settings form.
+   *
+   * @see \Drupal\ex_icons\Plugin\Field\FieldFormatter\ExIconDefaultFormatter::settingsForm()
+   */
+  public static function validateDimensions($element, FormStateInterface $form_state) {
+    $values = $form_state->getValue($element['#parents']);
+
+    if (!($values['width'] || $values['height'])) {
+      $form_state
+        ->setError($element['width'], t('Width or height must be set.'))
+        ->setError($element['height'], t('Width or height must be set.'));
+    }
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function settingsSummary() {
