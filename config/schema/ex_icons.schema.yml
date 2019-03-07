@@ -49,6 +49,16 @@ field.formatter.settings.ex_icon_default:
       type: integer
       label: 'Height'
 
+field.formatter.settings.ex_icon_link:
+  type: field.formatter.settings.link
+  mapping:
+    icon:
+      type: string
+    width:
+      type: integer
+    height:
+      type: integer
+
 field.widget.settings.ex_icon_select:
   type: mapping
   label: 'Icon field widget settings'
