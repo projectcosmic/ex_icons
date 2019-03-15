@@ -69,6 +69,7 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
   protected function getDiscovery() {
     if (!isset($this->discovery)) {
       $this->discovery = new SvgSymbolDiscovery(
+        'dist/icons',
         $this->moduleHandler->getModuleDirectories()
         + $this->themeHandler->getThemeDirectories()
       );

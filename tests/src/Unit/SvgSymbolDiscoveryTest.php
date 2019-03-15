@@ -32,8 +32,8 @@ class SvgSymbolDiscoveryTest extends UnitTestCase {
     vfsStreamWrapper::setRoot($root);
     $url = vfsStream::url('modules');
 
-    mkdir("$url/test_1/dist", 0777, TRUE);
-    copy(__DIR__ . '/../../fixtures/sprites.svg', "$url/test_1/dist/icons.svg");
+    mkdir("$url/test_1/test", 0777, TRUE);
+    copy(__DIR__ . '/../../fixtures/sprites.svg', "$url/test_1/test/sprites.svg");
 
     // Directory with no icon sheet.
     mkdir("$url/test_2");
@@ -44,7 +44,7 @@ class SvgSymbolDiscoveryTest extends UnitTestCase {
       'test_2' => "$url/test_2",
     ];
 
-    $discovery = new SvgSymbolDiscovery($directories);
+    $discovery = new SvgSymbolDiscovery('test/sprites', $directories);
     $data = $discovery->findAll();
 
     $this->assertEquals(1, count($data));

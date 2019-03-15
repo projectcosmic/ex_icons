@@ -41,11 +41,14 @@ class SvgSymbolDiscovery implements DiscoveryInterface {
   /**
    * Construct a SvgSymbolDiscovery object.
    *
+   * @param string $basename
+   *   The basename of the file to use for discovery; for example, 'foo/bar'
+   *   will become 'foo/bar.svg'.
    * @param array $directories
    *   An array of directories to scan.
    */
-  public function __construct(array $directories) {
-    $this->discovery = new MainSvgSymbolDiscovery($directories);
+  public function __construct($basename, array $directories) {
+    $this->discovery = new MainSvgSymbolDiscovery($basename, $directories);
   }
 
   /**

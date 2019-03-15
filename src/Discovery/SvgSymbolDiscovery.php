@@ -21,10 +21,14 @@ class SvgSymbolDiscovery implements DiscoverableInterface {
   /**
    * Constructs a SvgSymbolDiscovery object.
    *
+   * @param string $basename
+   *   The basename of the file to look for in each directory. Can include
+   *   slashes to designate sub-directories.
    * @param array $directories
    *   An array of directories to scan, keyed by the provider.
    */
-  public function __construct(array $directories) {
+  public function __construct($basename, array $directories) {
+    $this->basename = $basename;
     $this->directories = $directories;
   }
 
@@ -82,7 +86,7 @@ class SvgSymbolDiscovery implements DiscoverableInterface {
     $files = [];
 
     foreach ($this->directories as $provider => $directory) {
-      $file = "$directory/dist/icons.svg";
+      $file = "$directory/$this->basename.svg";
       if (file_exists($file)) {
         $files[$provider] = $file;
       }
