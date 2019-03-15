@@ -98,24 +98,22 @@ function ex_icons_preprocess_form_element_label(&$variables) {
  * Implements hook_page_bottom().
  */
 function ex_icons_icons_page_bottom(array &$page_bottom) {
-  $icons_manager = \Drupal::service('ex_icons.icons_manager');
+  $icons_manager = \Drupal::service('ex_icons.manager');
 
-  $defs = [];
-
-  $inline_defs = $icons_manager->getInlineDefs();
-  if ($inline_defs) {
-    $defs = [
+  $inline_defs = [];
+  if ($defs = implode('', $icons_manager->getInlineDefs())) {
+    $inline_defs = [
       '#type' => 'inline_template',
-      '#template' => '<svg{{ attributes }}>{{ defs|raw }}</svg>',
+      '#template' => '<svg{{ attributes }}><defs>{{ defs|raw }}</defs></svg>',
       '#context' => [
         'attributes' => new Attribute(['class' => ['visually-hidden']]),
-        'defs' => $inline_defs,
+        'defs' => $defs,
       ],
     ];
   }
 
-  \Drupal::service('renderer')->addCacheableDependency($defs, $icons_manager);
-  $page_bottom['ex_icons_inline_defs'] = $defs;
+  \Drupal::service('renderer')->addCacheableDependency($inline_defs, $icons_manager);
+  $page_bottom['ex_icons_inline_defs'] = $inline_defs;
 }
 
 /**
