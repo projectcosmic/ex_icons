@@ -39,4 +39,12 @@ interface ExIconInterface {
    */
   public function getHeight();
 
+  /**
+   * Returns the aspect ratio of the icon glyph.
+   *
+   * @return float
+   *   The aspect ratio as a ratio of width to height.
+   */
+  public function getAspectRatio();
+
 }

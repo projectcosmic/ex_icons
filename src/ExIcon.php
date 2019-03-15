@@ -40,4 +40,11 @@ class ExIcon extends PluginBase implements ExIconInterface {
     return (float) $this->pluginDefinition['height'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getAspectRatio() {
+    return (float) $this->getWidth() / $this->getHeight();
+  }
+
 }
