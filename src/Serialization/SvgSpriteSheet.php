@@ -45,11 +45,11 @@ class SvgSpriteSheet implements SerializationInterface {
   public static function decode($raw) {
     $data = [
       'icons' => [],
-      'inline_defs' => [],
-      'hash' => substr(hash('sha512', $raw), 0, 16),
+      'inline_defs' => '',
     ];
 
     $dom = new \DOMDocument();
+    $dom->preserveWhiteSpace = FALSE;
     $dom->loadXML($raw);
 
     foreach ($dom->getElementsByTagName('symbol') as $symbol) {
@@ -78,8 +78,13 @@ class SvgSpriteSheet implements SerializationInterface {
       ];
     }
 
+    /** @var \DOMElement $def */
     foreach ($dom->getElementsByTagName('defs') as $def) {
-      $data['inline_defs'][] = $dom->saveXML($def);
+      foreach ($def->childNodes as $child) {
+        if ($child->hasAttribute('id')) {
+          $data['inline_defs'] .= $dom->saveXML($child);
+        }
+      }
     }
 
     return $data;
