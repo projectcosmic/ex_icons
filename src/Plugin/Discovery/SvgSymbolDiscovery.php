@@ -2,7 +2,6 @@
 
 namespace Drupal\ex_icons\Plugin\Discovery;
 
-use Drupal\Component\Plugin\Discovery\DiscoveryInterface;
 use Drupal\Component\Plugin\Discovery\DiscoveryTrait;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\ex_icons\Discovery\SvgSymbolDiscovery as MainSvgSymbolDiscovery;
@@ -16,7 +15,7 @@ use Drupal\ex_icons\Discovery\SvgSymbolDiscovery as MainSvgSymbolDiscovery;
  * \Drupal\Core\StringTranslation\TranslatableMarkup will be used to translate
  * the string and also to mark it safe.
  */
-class SvgSymbolDiscovery implements DiscoveryInterface {
+class SvgSymbolDiscovery implements SvgSymbolDiscoveryInterface {
 
   use DiscoveryTrait;
 
@@ -98,6 +97,19 @@ class SvgSymbolDiscovery implements DiscoveryInterface {
     }
 
     return $definitions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getInlineDefs() {
+    $defs = [];
+
+    foreach ($this->discovery->findAll() as $provider => $data) {
+      $defs[$provider] = $data['inline_defs'];
+    }
+
+    return $defs;
   }
 
 }

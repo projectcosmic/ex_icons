@@ -41,6 +41,20 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
   ];
 
   /**
+   * The inline defs markup keyed by provider.
+   *
+   * @var string[]
+   */
+  protected $inlineDefs = [];
+
+  /**
+   * The object that discovers plugins managed by this manager.
+   *
+   * @var \Drupal\ex_icons\Plugin\Discovery\SvgSymbolDiscoveryInterface
+   */
+  protected $discovery;
+
+  /**
    * The theme handler.
    *
    * @var \Drupal\Core\Extension\ThemeHandlerInterface
@@ -69,7 +83,10 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
   }
 
   /**
-   * {@inheritdoc}
+   * Gets the plugin discovery.
+   *
+   * @return \Drupal\ex_icons\Plugin\Discovery\SvgSymbolDiscoveryInterface
+   *   The plugin discovery.
    */
   protected function getDiscovery() {
     if (!isset($this->discovery)) {
@@ -90,6 +107,25 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
    */
   protected function providerExists($provider) {
     return $this->moduleHandler->moduleExists($provider) || $this->themeHandler->themeExists($provider);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function clearCachedDefinitions() {
+    parent::clearCachedDefinitions();
+    $this->inlineDefs = [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getInlineDefs() {
+    if (!isset($this->inlineDefs)) {
+      $this->inlineDefs = $this->getDiscovery()->getInlineDefs();
+    }
+
+    return $this->inlineDefs;
   }
 
 }
