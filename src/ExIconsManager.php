@@ -13,7 +13,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\ex_icons\Plugin\Discovery\SvgSymbolDiscovery;
 
 /**
- * Service helping with querying icon data from a sprite sheet.
+ * Defines a plugin manager to deal with external-use icons.
  */
 class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInterface {
 

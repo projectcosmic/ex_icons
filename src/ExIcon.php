@@ -16,7 +16,7 @@ class ExIcon extends PluginBase implements ExIconInterface {
    * {@inheritdoc}
    */
   public function getLabel() {
-    return $this->t($this->pluginDefinition['label'], [], ['context' => 'ex_icons']);
+    return $this->t($this->pluginDefinition['label'], [], ['context' => 'Icon Label']);
   }
 
   /**

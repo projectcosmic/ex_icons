@@ -3,7 +3,7 @@
 namespace Drupal\ex_icons;
 
 /**
- * Interface for Breakpoint plugins.
+ * Interface for external-use icon plugins.
  */
 interface ExIconInterface {
 

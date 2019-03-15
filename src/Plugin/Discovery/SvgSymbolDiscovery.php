@@ -8,15 +8,13 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\ex_icons\Discovery\SvgSymbolDiscovery as MainSvgSymbolDiscovery;
 
 /**
- * Allows YAML files to define plugin definitions.
+ * Allows SVG files to define plugin definitions.
  *
  * If the value of a key (like title) in the definition is translatable then
  * the addTranslatableProperty() method can be used to mark it as such and also
  * to add translation context. Then
  * \Drupal\Core\StringTranslation\TranslatableMarkup will be used to translate
- * the string and also to mark it safe. Only strings written in the YAML files
- * should be marked as safe, strings coming from dynamic plugin definitions
- * potentially containing user input should not.
+ * the string and also to mark it safe.
  */
 class SvgSymbolDiscovery implements DiscoveryInterface {
 
