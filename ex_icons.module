@@ -53,7 +53,7 @@ function template_preprocess_ex_icon(array &$variables) {
 
     $aspect_ratio = 1;
     if ($icon) {
-    // Flip aspect ratio value for calculating width.
+      // Flip aspect ratio value for calculating width.
       $aspect_ratio = $missing_length_key == 'width'
         ? 1 / $icon->getAspectRatio()
         : $icon->getAspectRatio();
@@ -120,12 +120,23 @@ function ex_icons_icons_page_bottom(array &$page_bottom) {
  * Implements hook_page_attachments().
  */
 function ex_icons_page_attachments(array &$attachments) {
-  $icons_manager = \Drupal::service('ex_icons.icons_manager');
-  $attachments['#attached']['drupalSettings']['exIcons'] = [
-    'basePath' => $icons_manager->getSheetUrl(),
-    'hash' => $icons_manager->getHash(),
-    'full' => $icons_manager->getSheetUrl() . '?' . $icons_manager->getHash(),
-  ];
+  $icons_manager = \Drupal::service('ex_icons.manager');
+
+  $paths = [];
+  foreach ($icons_manager->getDefinitions() as $id => $definition) {
+    if (isset($paths[$definition['provider']])) {
+      continue;
+    }
+
+    // Use first icon's discovered for a provider, removing it's hash portion.
+    $paths[$definition['provider']] = preg_replace(
+      '/(.+)#.+?$/',
+      '$1',
+      $icons_manager->buildUrl($id)
+    );
+  }
+
+  $attachments['#attached']['drupalSettings']['exIcons']['paths'] = $paths;
 }
 
 /**
