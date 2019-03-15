@@ -3,12 +3,20 @@
 This module helps with integrating [external-use icons](https://css-tricks.com/svg-sprites-use-better-icon-fonts/)
 into Drupal.
 
-## Setup
-
-Once downloaded and installed, set the path to the icons sprite sheet using the
-settings form at `/admin/config/media/ex-icons-settings`.
-
 ## Contents
+
+### Icons as Plugins
+
+Icons are automatically discovered from the icon sheet at
+`module_or_theme/dist/icons.svg` and are recorded as plugins.
+
+The definitions are managed with the `ex_icons.manager` plugin manager service.
+There is a convenience [Drush](https://www.drush.org/) command to clear the
+definitions cache for these:
+
+```sh
+$ drush cc ex-icons
+```
 
 ### Theme element
 
@@ -56,15 +64,5 @@ $form['icon'] = [
 
 ### Field API integration
 
-A field type, widget and formatter to select and  display an icon using the
+A field type, widget and formatter to select and display an icon using the
 things mentioned above.
-
-### Icons Manager service
-
-A service with getters of icon data.
-
-Data is cached for efficiency but can be cleared independently with [Drush](https://www.drush.org/):
-
-```
-$ drush cc ex-icons
-```
