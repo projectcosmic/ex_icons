@@ -32,7 +32,7 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
     // Height of the icon.
     'height' => 1,
     // Default class for icon implementations.
-    'class' => 'Drupal\ex_icon\ExIcon',
+    'class' => 'Drupal\ex_icons\ExIcon',
   ];
 
   /**
