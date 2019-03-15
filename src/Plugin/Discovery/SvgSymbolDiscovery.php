@@ -92,7 +92,7 @@ class SvgSymbolDiscovery implements DiscoveryInterface {
           }
         }
         // Add ID and provider.
-        $definitions[$id] = $definition + [
+        $definitions["$provider/$id"] = $definition + [
           'provider' => $provider,
           'id' => $id,
         ];
