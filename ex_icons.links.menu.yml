@@ -1,5 +1,0 @@
-ex_icons.settings:
-  title: 'External-use Icons Settings'
-  description: 'Configure options for the global external-use icons scheme.'
-  parent: system.admin_config_media
-  route_name: ex_icons.settings
