@@ -129,3 +129,17 @@ function ex_icons_page_attachments(array &$attachments) {
     'full' => $icons_manager->getSheetUrl() . '?' . $icons_manager->getHash(),
   ];
 }
+
+/**
+ * Implements hook_themes_installed().
+ */
+function ex_icons_themes_installed($theme_list) {
+  \Drupal::service('ex_icons.manager')->clearCachedDefinitions();
+}
+
+/**
+ * Implements hook_themes_uninstalled().
+ */
+function ex_icons_themes_uninstalled($theme_list) {
+  \Drupal::service('ex_icons.manager')->clearCachedDefinitions();
+}
