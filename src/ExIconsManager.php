@@ -20,6 +20,11 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
   use StringTranslationTrait;
 
   /**
+   * The basename of sprite sheets to discover within extensions.
+   */
+  const BASENAME = 'dist/icons';
+
+  /**
    * {@inheritdoc}
    */
   protected $defaults = [
@@ -69,7 +74,7 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
   protected function getDiscovery() {
     if (!isset($this->discovery)) {
       $this->discovery = new SvgSymbolDiscovery(
-        'dist/icons',
+        self::BASENAME,
         $this->moduleHandler->getModuleDirectories()
         + $this->themeHandler->getThemeDirectories()
       );
