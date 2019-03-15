@@ -9,8 +9,7 @@
  * Available variables:
  * - id: The ID of the <symbol> element to use from the spritesheet.
  * - attributes: Attributes string to set on the <svg> element.
- * - sheet_url: The path to the SVG sprite sheet.
- * - hash: A hash of the current icon data for cache busting.
+ * - url: The path to the symbol.
  *
  * @see template_preprocess_ex_icon();
  *
@@ -19,6 +18,6 @@
 #}
 {% spaceless %}
 <svg{{ attributes }}>
-  <use xlink:href="{{ sheet_url }}?{{ hash }}#{{ id }}"/>
+  <use xlink:href="{{ url }}"/>
 </svg>
 {% endspaceless %}
