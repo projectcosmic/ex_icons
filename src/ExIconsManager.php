@@ -2,6 +2,7 @@
 
 namespace Drupal\ex_icons;
 
+use Drupal\Component\Plugin\FallbackPluginManagerInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
@@ -15,7 +16,7 @@ use Drupal\ex_icons\Plugin\Discovery\SvgSymbolDiscovery;
 /**
  * Defines a plugin manager to deal with external-use icons.
  */
-class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInterface {
+class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInterface, FallbackPluginManagerInterface {
 
   use StringTranslationTrait;
 
@@ -48,6 +49,13 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
    * @var string[]
    */
   protected $inlineDefs = [];
+
+  /**
+   * Instantiated plugin instances.
+   *
+   * @var \Drupal\ex_icons\ExIconInterface[]
+   */
+  protected $instances = [];
 
   /**
    * The object that discovers plugins managed by this manager.
@@ -117,6 +125,7 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
   public function clearCachedDefinitions() {
     parent::clearCachedDefinitions();
     $this->inlineDefs = [];
+    $this->instances = [];
   }
 
   /**
@@ -128,6 +137,28 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
     }
 
     return $this->inlineDefs;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getInstance(array $options) {
+    if (isset($options['id'])) {
+      $id = $options['id'];
+
+      if (!isset($this->instances[$id])) {
+        $this->createInstance($id);
+      }
+
+      return $this->instances[$id];
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFallbackPluginId($plugin_id, array $configuration = []) {
+    return 'ex_icon_null';
   }
 
 }

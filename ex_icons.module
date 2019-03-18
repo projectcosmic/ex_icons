@@ -33,10 +33,8 @@ function template_preprocess_ex_icon(array &$variables) {
   /** @var \Drupal\ex_icons\ExIconsManager $icons_manager */
   $icons_manager = \Drupal::service('ex_icons.manager');
 
-  /** @var \Drupal\ex_icons\ExIconInterface|null $icon */
-  $icon = $icons_manager->hasDefinition($variables['id'])
-    ? $icons_manager->createInstance($variables['id'])
-    : NULL;
+  /** @var \Drupal\ex_icons\ExIconInterface $icon */
+  $icon = $icons_manager->getInstance($variables['id']);
 
   // Default role to be img.
   if (!isset($variables['attributes']['role'])) {
@@ -51,18 +49,15 @@ function template_preprocess_ex_icon(array &$variables) {
     $existing_length = reset($dimension_attributes);
     $missing_length_key = key(array_diff_key($dimension_keys, $dimension_attributes));
 
-    $aspect_ratio = 1;
-    if ($icon) {
-      // Flip aspect ratio value for calculating width.
-      $aspect_ratio = $missing_length_key == 'width'
-        ? 1 / $icon->getAspectRatio()
-        : $icon->getAspectRatio();
-    }
+    // Flip aspect ratio value for calculating width.
+    $aspect_ratio = $missing_length_key == 'width'
+      ? 1 / $icon->getAspectRatio()
+      : $icon->getAspectRatio();
 
     $variables['attributes'][$missing_length_key] = round($existing_length * $aspect_ratio, 2);
   }
 
-  $variables['url'] = $icon ? $icon->getUrl() : '';
+  $variables['url'] = $icon->getUrl();
   \Drupal::service('renderer')->addCacheableDependency($variables, $icons_manager);
 }
 
@@ -137,6 +132,18 @@ function ex_icons_page_attachments(array &$attachments) {
   }
 
   $attachments['#attached']['drupalSettings']['exIcons']['paths'] = $paths;
+}
+
+/**
+ * Implements hook_ex_icons_alter().
+ */
+function ex_icons_ex_icons_alter(array &$definitions) {
+  $definitions['ex_icon_null'] = [
+    'id' => 'ex_icon_null',
+    'width' => 1,
+    'height' => 1,
+    'url' => '',
+  ];
 }
 
 /**
