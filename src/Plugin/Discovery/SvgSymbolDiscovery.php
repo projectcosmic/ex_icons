@@ -91,6 +91,7 @@ class SvgSymbolDiscovery implements SvgSymbolDiscoveryInterface {
         // Add ID and provider.
         $definitions[$id] = $definition + [
           'provider' => $provider,
+          'url' => "$data[base_url]#$id",
           'id' => $id,
         ];
       }

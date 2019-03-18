@@ -3,7 +3,6 @@
 namespace Drupal\Tests\ex_icons\Unit;
 
 use Drupal\Component\FileCache\FileCacheFactory;
-use Drupal\ex_icons\Discovery\SvgSymbolDiscovery;
 use Drupal\Tests\UnitTestCase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
@@ -44,7 +43,7 @@ class SvgSymbolDiscoveryTest extends UnitTestCase {
       'test_2' => "$url/test_2",
     ];
 
-    $discovery = new SvgSymbolDiscovery('test/sprites', $directories);
+    $discovery = new TestSvgSymbolDiscovery('test/sprites', $directories);
     $data = $discovery->findAll();
 
     $this->assertEquals(1, count($data));
@@ -56,6 +55,12 @@ class SvgSymbolDiscoveryTest extends UnitTestCase {
 
     $this->assertArrayHasKey('inline_defs', $data['test_1']);
     $this->assertNotEmpty($data['test_1']['inline_defs']);
+
+    $this->assertArrayHasKey('base_url', $data['test_1']);
+    $this->assertRegExp(
+      "@^transformed:$url/test_1/test/sprites\\.svg\\?.+$@",
+      $data['test_1']['base_url']
+    );
   }
 
 }

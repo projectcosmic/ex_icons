@@ -36,16 +36,11 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
     'width' => 1,
     // Height of the icon.
     'height' => 1,
+    // URL of the icon.
+    'url' => '',
     // Default class for icon implementations.
     'class' => 'Drupal\ex_icons\ExIcon',
   ];
-
-  /**
-   * The relative, printable URLS for sprite sheets per provider.
-   *
-   * @var string[]
-   */
-  protected $providerUrls = [];
 
   /**
    * The inline defs markup keyed by provider.
@@ -119,61 +114,8 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
   /**
    * {@inheritdoc}
    */
-  public function buildUrl($id) {
-    $plugin = $this->getDefinition($id);
-    $provider = $plugin['provider'];
-
-    if (!isset($this->providerUrls[$provider])) {
-      if ($cache = $this->cacheBackend->get("$this->cacheKey:$provider")) {
-        $this->providerUrls[$provider] = $cache->data;
-      }
-      else {
-        // Get the provider's icons.
-        $icons = [];
-        foreach ($this->getDefinitions() as $plugin_id => $plugin_definition) {
-          if ($plugin_definition['provider'] == $provider) {
-            $icons[$plugin_id] = $plugin_definition;
-          }
-        }
-        // Sort to ensure that changes in order do not change generated hash.
-        ksort($icons, SORT_STRING);
-
-        // Get any inline def content.
-        $inline_defs = $this->getInlineDefs()[$provider];
-
-        // Resolve provider path, first assuming module then fallback to theme.
-        $provider_path = $this->moduleHandler->moduleExists($provider)
-          ? $this->moduleHandler->getModule($provider)->getPath()
-          : $this->themeHandler->themeExists($provider)
-          ? $this->themeHandler->getTheme($provider)->getPath()
-          : '';
-
-        // Construct the relative URL, with version hash from icon definitions
-        // and inline defs.
-        $url = file_url_transform_relative(file_create_url("$provider_path/" . self::BASENAME . '.svg'))
-          . '?'
-          . substr(hash('sha512', json_encode($icons) . $inline_defs), 0, 16);
-
-        $this->cacheBackend->set(
-          "$this->cacheKey:$provider",
-          $url,
-          CacheBackendInterface::CACHE_PERMANENT,
-          ['ex_icons']
-        );
-
-        $this->providerUrls[$provider] = $url;
-      }
-    }
-
-    return $this->providerUrls[$provider] . "#$id";
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function clearCachedDefinitions() {
     parent::clearCachedDefinitions();
-    $this->providerUrls = [];
     $this->inlineDefs = [];
   }
 

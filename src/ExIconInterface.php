@@ -47,4 +47,12 @@ interface ExIconInterface {
    */
   public function getAspectRatio();
 
+  /**
+   * Returns the full URL for the icon.
+   *
+   * @return string
+   *   The full URL, suitable for use in SVG <use> tags.
+   */
+  public function getUrl();
+
 }

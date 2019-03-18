@@ -110,4 +110,13 @@ class ExIconTest extends UnitTestCase {
     $this->assertEquals('icon', $this->icon->getProvider());
   }
 
+  /**
+   * @covers ::getUrl
+   */
+  public function testGetUrl() {
+    $this->pluginDefinition['url'] = 'a/b/c.svg#icon';
+    $this->setupIcon();
+    $this->assertEquals('a/b/c.svg#icon', $this->icon->getUrl());
+  }
+
 }

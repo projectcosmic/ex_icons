@@ -47,4 +47,11 @@ class ExIcon extends PluginBase implements ExIconInterface {
     return (float) $this->getWidth() / $this->getHeight();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getUrl() {
+    return $this->pluginDefinition['url'];
+  }
+
 }

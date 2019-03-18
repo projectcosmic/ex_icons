@@ -53,7 +53,12 @@ class SvgSymbolDiscovery implements DiscoverableInterface {
     // parse them now. This list was flipped above and is keyed by filename.
     if ($provider_by_files) {
       foreach ($provider_by_files as $file => $provider) {
-        $all[$provider] = $this->decode($file);
+        $data = $this->decode($file);
+        $all[$provider] = [
+          'base_url' => $this->transformFileUrl($file)
+          . '?'
+          . substr(hash('sha512', json_encode($data)), 0, 16),
+        ] + $data;
         $file_cache->set($file, $all[$provider]);
       }
     }
@@ -93,6 +98,19 @@ class SvgSymbolDiscovery implements DiscoverableInterface {
     }
 
     return $files;
+  }
+
+  /**
+   * Transforms a file path to a relative, web-accessible URL.
+   *
+   * @param string $file_path
+   *   The path to transform.
+   *
+   * @return string
+   *   The transformed, web-accessible URL.
+   */
+  protected function transformFileUrl($file_path) {
+    return file_url_transform_relative(file_create_url($file_path));
   }
 
 }

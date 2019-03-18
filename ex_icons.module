@@ -62,7 +62,7 @@ function template_preprocess_ex_icon(array &$variables) {
     $variables['attributes'][$missing_length_key] = round($existing_length * $aspect_ratio, 2);
   }
 
-  $variables['url'] = $icon ? $icons_manager->buildUrl($variables['id']) : '';
+  $variables['url'] = $icon ? $icon->getUrl() : '';
   \Drupal::service('renderer')->addCacheableDependency($variables, $icons_manager);
 }
 
