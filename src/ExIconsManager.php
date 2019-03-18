@@ -46,9 +46,9 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
   /**
    * The inline defs markup keyed by provider.
    *
-   * @var string[]
+   * @var string[]|null
    */
-  protected $inlineDefs = [];
+  protected $inlineDefs;
 
   /**
    * Instantiated plugin instances.
@@ -124,7 +124,7 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
    */
   public function clearCachedDefinitions() {
     parent::clearCachedDefinitions();
-    $this->inlineDefs = [];
+    $this->inlineDefs = NULL;
     $this->instances = [];
   }
 
