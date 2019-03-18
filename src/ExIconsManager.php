@@ -147,7 +147,7 @@ class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInter
       $id = $options['id'];
 
       if (!isset($this->instances[$id])) {
-        $this->createInstance($id);
+        $this->instances[$id] = $this->createInstance($id);
       }
 
       return $this->instances[$id];
