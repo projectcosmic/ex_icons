@@ -10,7 +10,7 @@
 
   <symbol id="icon-no-title" viewBox="0 0 25 25"></symbol>
 
-  <symbol id="icon" viewBox="0 0 20 20">
+  <symbol id="icon" viewBox="0 0 20 60">
     <title>Icon</title>
     <rect width="20" height="20" fill="url(#gradient)" clip-path="url(#clip-path)" />
   </symbol>

@@ -27,7 +27,7 @@ class SvgSpriteSheetTest extends UnitTestCase {
         ],
         'icon' => [
           'width'  => 20,
-          'height' => 20,
+          'height' => 60,
           'label'  => 'Icon',
         ],
       ],
