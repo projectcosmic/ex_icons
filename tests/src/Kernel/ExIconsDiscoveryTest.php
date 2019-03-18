@@ -80,4 +80,19 @@ class ExIconsDiscoveryTest extends KernelTestBase {
     }
   }
 
+  /**
+   * Tests the getInstance method.
+   */
+  public function testGetInstance() {
+    $manager = \Drupal::service('ex_icons.manager');
+
+    // Test that an existing ID returns the instance.
+    $instance = $manager->getInstance(['id' => 'icon']);
+    $this->assertEquals('icon', $instance->getPluginId());
+
+    // Test that an non-existing ID returns the fall-back null instance.
+    $instance = $manager->getInstance(['id' => 'does_not_exist']);
+    $this->assertEquals('ex_icon_null', $instance->getPluginId());
+  }
+
 }
