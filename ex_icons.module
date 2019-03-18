@@ -49,8 +49,8 @@ function template_preprocess_ex_icon(array &$variables) {
     $existing_length = reset($dimension_attributes);
     $missing_length_key = key(array_diff_key($dimension_keys, $dimension_attributes));
 
-    // Flip aspect ratio value for calculating width.
-    $aspect_ratio = $missing_length_key == 'width'
+    // Flip aspect ratio value for calculating height.
+    $aspect_ratio = $missing_length_key == 'height'
       ? 1 / $icon->getAspectRatio()
       : $icon->getAspectRatio();
 

@@ -52,7 +52,7 @@ class ExIconsDiscoveryTest extends KernelTestBase {
       ],
       'module-icon' => [
         'width' => 20,
-        'height' => 20,
+        'height' => 40,
         'provider' => 'ex_icons_module_test',
         'id' => 'module-icon',
         'class' => 'Drupal\\ex_icons\\ExIcon',
