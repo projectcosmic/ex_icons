@@ -110,7 +110,8 @@ class SvgSymbolDiscovery implements DiscoverableInterface {
    *   The transformed, web-accessible URL.
    */
   protected function transformFileUrl($file_path) {
-    return file_url_transform_relative(file_create_url($file_path));
+    $relative = str_replace(\Drupal::service('app.root'), '', $file_path);
+    return file_url_transform_relative(file_create_url($relative));
   }
 
 }

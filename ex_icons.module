@@ -12,7 +12,7 @@ function ex_icons_theme() {
   return [
     'ex_icon' => [
       'variables' => [
-        'id' => NULL,
+        'id' => '',
         'attributes' => [],
       ],
     ],
@@ -34,7 +34,7 @@ function template_preprocess_ex_icon(array &$variables) {
   $icons_manager = \Drupal::service('ex_icons.manager');
 
   /** @var \Drupal\ex_icons\ExIconInterface $icon */
-  $icon = $icons_manager->getInstance($variables['id']);
+  $icon = $icons_manager->getInstance(['id' => $variables['id'] ?: '']);
 
   // Default role to be img.
   if (!isset($variables['attributes']['role'])) {
@@ -118,17 +118,23 @@ function ex_icons_page_attachments(array &$attachments) {
   $icons_manager = \Drupal::service('ex_icons.manager');
 
   $paths = [];
-  foreach ($icons_manager->getDefinitions() as $id => $definition) {
-    if (isset($paths[$definition['provider']])) {
+  foreach (array_keys($icons_manager->getDefinitions()) as $id) {
+    // Skip the fall-back null instance.
+    if ($id == 'ex_icon_null') {
       continue;
     }
 
-    // Use first icon's discovered for a provider, removing it's hash portion.
-    $paths[$definition['provider']] = preg_replace(
-      '/(.+)#.+?$/',
-      '$1',
-      $icons_manager->buildUrl($id)
-    );
+    $instance = $icons_manager->getInstance(['id' => $id]);
+    $provider = $instance->getProvider();
+
+    // Already got a URL for this provider.
+    if (isset($paths[$provider])) {
+      continue;
+    }
+
+    // Use first discovered icon's URL for each provider, removing it's hash
+    // portion to be more generic.
+    $paths[$provider] = strstr($instance->getUrl(), '#', TRUE);
   }
 
   $attachments['#attached']['drupalSettings']['exIcons']['paths'] = $paths;
