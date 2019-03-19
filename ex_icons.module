@@ -5,6 +5,8 @@
  * External-use icons module.
  */
 
+use Drupal\Core\Template\Attribute;
+
 /**
  * Implements hook_theme().
  */
@@ -92,7 +94,7 @@ function ex_icons_preprocess_form_element_label(&$variables) {
 /**
  * Implements hook_page_bottom().
  */
-function ex_icons_icons_page_bottom(array &$page_bottom) {
+function ex_icons_page_bottom(array &$page_bottom) {
   $icons_manager = \Drupal::service('ex_icons.manager');
 
   $inline_defs = [];
