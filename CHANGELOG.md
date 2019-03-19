@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 [Unreleased]
 ------------
 
+[2.0.0] - 2019-03-19
+--------------------
+### Added
+- Add SVG Symbol plugin discovery
+- Add SVG sprite sheet decoder
+- Add tests
+
+### Changed
+- Change icons to plugins
+- Change ExIconsManager to a plugin manager
+- Add aspect ratio icon property
+
+### Removed
+- Remove sprite sheet config setting
+
 [1.2.0] - 2019-03-07
 --------------------
 ### Added
@@ -55,7 +70,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add Icon URL data to JavaScript settings
 - Add defs inline from the sprite sheet
 
-[Unreleased]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/HEAD%250D1.2.0
+[Unreleased]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/HEAD%250D2.0.0
+[2.0.0]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/2.0.0%250D1.2.0
 [1.2.0]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/1.2.0%250D1.1.1
 [1.1.1]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/1.1.1%250D1.1.0
 [1.1.0]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/1.1.0%250D1.0.0
