@@ -5,6 +5,8 @@
  * External-use icons module.
  */
 
+use Drupal\Core\Template\Attribute;
+
 /**
  * Implements hook_theme().
  */
@@ -12,7 +14,7 @@ function ex_icons_theme() {
   return [
     'ex_icon' => [
       'variables' => [
-        'id' => NULL,
+        'id' => '',
         'attributes' => [],
       ],
     ],
@@ -26,12 +28,15 @@ function ex_icons_theme() {
  *
  * @param array $variables
  *   An associative array containing:
- *   - id: The XML id value of the symbol element in the SVG sprite sheet.
+ *   - id: The plugin definition ID of the icon to use.
  *   - attributes: The HTML attributes to apply to the SVG element.
  */
 function template_preprocess_ex_icon(array &$variables) {
-  $icons_manager = \Drupal::service('ex_icons.icons_manager');
-  $variables['sheet_url'] = $icons_manager->getSheetUrl();
+  /** @var \Drupal\ex_icons\ExIconsManager $icons_manager */
+  $icons_manager = \Drupal::service('ex_icons.manager');
+
+  /** @var \Drupal\ex_icons\ExIconInterface $icon */
+  $icon = $icons_manager->getInstance(['id' => $variables['id'] ?: '']);
 
   // Default role to be img.
   if (!isset($variables['attributes']['role'])) {
@@ -43,26 +48,18 @@ function template_preprocess_ex_icon(array &$variables) {
 
   // Calculate other dimension if only one has been specified:
   if (count($dimension_attributes) == 1) {
-    $icon_list = $icons_manager->getIcons();
-
-    $source_icon_data = isset($icon_list[$variables['id']]) ?
-      $icon_list[$variables['id']] :
-      ['width' => 1, 'height' => 1];
-
-    $aspect_ratio = $source_icon_data['height'] / $source_icon_data['width'];
     $existing_length = reset($dimension_attributes);
     $missing_length_key = key(array_diff_key($dimension_keys, $dimension_attributes));
 
-    // Flip aspect ratio value for calculating width.
-    if ($missing_length_key == 'width') {
-      $aspect_ratio = 1 / $aspect_ratio;
-    }
+    // Flip aspect ratio value for calculating height.
+    $aspect_ratio = $missing_length_key == 'height'
+      ? 1 / $icon->getAspectRatio()
+      : $icon->getAspectRatio();
 
     $variables['attributes'][$missing_length_key] = round($existing_length * $aspect_ratio, 2);
   }
 
-  $variables['hash'] = $icons_manager->getHash();
-
+  $variables['url'] = $icon->getUrl();
   \Drupal::service('renderer')->addCacheableDependency($variables, $icons_manager);
 }
 
@@ -97,35 +94,78 @@ function ex_icons_preprocess_form_element_label(&$variables) {
 /**
  * Implements hook_page_bottom().
  */
-function ex_icons_icons_page_bottom(array &$page_bottom) {
-  $icons_manager = \Drupal::service('ex_icons.icons_manager');
+function ex_icons_page_bottom(array &$page_bottom) {
+  $icons_manager = \Drupal::service('ex_icons.manager');
 
-  $defs = [];
-
-  $inline_defs = $icons_manager->getInlineDefs();
-  if ($inline_defs) {
-    $defs = [
+  $inline_defs = [];
+  if ($defs = implode('', $icons_manager->getInlineDefs())) {
+    $inline_defs = [
       '#type' => 'inline_template',
-      '#template' => '<svg{{ attributes }}>{{ defs|raw }}</svg>',
+      '#template' => '<svg{{ attributes }}><defs>{{ defs|raw }}</defs></svg>',
       '#context' => [
         'attributes' => new Attribute(['class' => ['visually-hidden']]),
-        'defs' => $inline_defs,
+        'defs' => $defs,
       ],
     ];
   }
 
-  \Drupal::service('renderer')->addCacheableDependency($defs, $icons_manager);
-  $page_bottom['ex_icons_inline_defs'] = $defs;
+  \Drupal::service('renderer')->addCacheableDependency($inline_defs, $icons_manager);
+  $page_bottom['ex_icons_inline_defs'] = $inline_defs;
 }
 
 /**
  * Implements hook_page_attachments().
  */
 function ex_icons_page_attachments(array &$attachments) {
-  $icons_manager = \Drupal::service('ex_icons.icons_manager');
-  $attachments['#attached']['drupalSettings']['exIcons'] = [
-    'basePath' => $icons_manager->getSheetUrl(),
-    'hash' => $icons_manager->getHash(),
-    'full' => $icons_manager->getSheetUrl() . '?' . $icons_manager->getHash(),
+  $icons_manager = \Drupal::service('ex_icons.manager');
+
+  $paths = [];
+  foreach (array_keys($icons_manager->getDefinitions()) as $id) {
+    // Skip the fall-back null instance.
+    if ($id == 'ex_icon_null') {
+      continue;
+    }
+
+    $instance = $icons_manager->getInstance(['id' => $id]);
+    $provider = $instance->getProvider();
+
+    // Already got a URL for this provider.
+    if (isset($paths[$provider])) {
+      continue;
+    }
+
+    // Use first discovered icon's URL for each provider, removing it's hash
+    // portion to be more generic.
+    $paths[$provider] = strstr($instance->getUrl(), '#', TRUE);
+  }
+
+  $attachments['#attached']['drupalSettings']['exIcons']['paths'] = $paths;
+}
+
+/**
+ * Implements hook_ex_icons_alter().
+ */
+function ex_icons_ex_icons_alter(array &$definitions) {
+  $definitions['ex_icon_null'] = [
+    'id' => 'ex_icon_null',
+    'width' => 1,
+    'height' => 1,
+    'url' => '',
+    'provider' => 'ex_icons',
+    'class' => 'Drupal\\ex_icons\\ExIcon',
   ];
+}
+
+/**
+ * Implements hook_themes_installed().
+ */
+function ex_icons_themes_installed($theme_list) {
+  \Drupal::service('ex_icons.manager')->clearCachedDefinitions();
+}
+
+/**
+ * Implements hook_themes_uninstalled().
+ */
+function ex_icons_themes_uninstalled($theme_list) {
+  \Drupal::service('ex_icons.manager')->clearCachedDefinitions();
 }

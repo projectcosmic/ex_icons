@@ -1,12 +1,3 @@
-# Schema for configuration files of the External-use Icons module.
-
-ex_icons.settings:
-  type: config_object
-  mapping:
-    path:
-      type: string
-      label: 'Path to the SVG sprite sheet that is used.'
-
 # Schema for the configuration of the Icon field type and associated plugins.
 
 field.storage_settings.ex_icon:

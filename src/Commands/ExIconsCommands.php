@@ -3,7 +3,7 @@
 namespace Drupal\ex_icons\Commands;
 
 use Drush\Commands\DrushCommands;
-use Drupal\ex_icons\ExIconsManagerInterface;
+use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
  * A Drush commandfile.
@@ -13,17 +13,17 @@ class ExIconsCommands extends DrushCommands {
   /**
    * The icons manager service.
    *
-   * @var \Drupal\ex_icons\ExIconsManagerInterface
+   * @var \Drupal\Core\Plugin\DefaultPluginManager
    */
   protected $iconsManager;
 
   /**
    * Constructs a ExIconsCommands object.
    *
-   * @param \Drupal\ex_icons\ExIconsManagerInterface $icons_manager
+   * @param \Drupal\Core\Plugin\DefaultPluginManager $icons_manager
    *   The icons manager service.
    */
-  public function __construct(ExIconsManagerInterface $icons_manager) {
+  public function __construct(DefaultPluginManager $icons_manager) {
     parent::__construct();
     $this->iconsManager = $icons_manager;
   }
@@ -41,10 +41,10 @@ class ExIconsCommands extends DrushCommands {
   }
 
   /**
-   * Clears the icons cache.
+   * Clears icon plugin definitions cache.
    */
   public function clearIconsCache() {
-    $this->iconsManager->rebuild();
+    $this->iconsManager->clearCachedDefinitions();
   }
 
 }

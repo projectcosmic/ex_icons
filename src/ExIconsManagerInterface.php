@@ -2,50 +2,17 @@
 
 namespace Drupal\ex_icons;
 
-use Drupal\Core\Cache\CacheableDependencyInterface;
-
 /**
- * Provides an interface for querying icon data from a sprite sheet.
+ * Defines an interface for SVG external-use icon plugin managers.
  */
-interface ExIconsManagerInterface extends CacheableDependencyInterface {
-
-  /**
-   * Returns the list of icons.
-   *
-   * @return array
-   *   The list of icons keyed by their id, with each element containing:
-   *   - width: The effective width of the icon, as defined by its viewBox.
-   *   - height: The effective height of the icon, as defined by its viewBox.
-   */
-  public function getIcons();
+interface ExIconsManagerInterface {
 
   /**
    * Returns the inline defs markup.
    *
-   * @return string
-   *   The inline defs markup without the surrounding <defs> tags.
+   * @return string[]
+   *   The inline defs markup keyed per provider.
    */
   public function getInlineDefs();
-
-  /**
-   * Returns the URL to the icon sprite sheet suitable for HTML usage.
-   *
-   * @return string
-   *   The URL relative to the website root.
-   */
-  public function getSheetUrl();
-
-  /**
-   * Returns a cache-busting hash of the icon data.
-   *
-   * @return string
-   *   The hash.
-   */
-  public function getHash();
-
-  /**
-   * Invalidates any caches and rebuilds icon data.
-   */
-  public function rebuild();
 
 }

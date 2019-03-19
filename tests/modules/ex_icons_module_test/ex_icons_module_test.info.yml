@@ -1,0 +1,6 @@
+name: 'External-use Icons test module'
+type: module
+description: 'Test module for External-use Icons.'
+package: Testing
+version: VERSION
+core: 8.x

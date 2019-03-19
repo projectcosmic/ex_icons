@@ -2,176 +2,163 @@
 
 namespace Drupal\ex_icons;
 
+use Drupal\Component\Plugin\FallbackPluginManagerInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Extension\ThemeHandlerInterface;
+use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\Core\Plugin\Discovery\ContainerDerivativeDiscoveryDecorator;
+use Drupal\Core\Plugin\Factory\ContainerFactory;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\ex_icons\Plugin\Discovery\SvgSymbolDiscovery;
 
 /**
- * Service helping with querying icon data from a sprite sheet.
+ * Defines a plugin manager to deal with external-use icons.
  */
-class ExIconsManager implements ExIconsManagerInterface {
+class ExIconsManager extends DefaultPluginManager implements ExIconsManagerInterface, FallbackPluginManagerInterface {
+
+  use StringTranslationTrait;
 
   /**
-   * Cache ID used to store icon data.
+   * The basename of sprite sheets to discover within extensions.
    */
-  const CACHE_ID = 'ex_icons_data';
+  const BASENAME = 'dist/icons';
 
   /**
-   * Cache backend service.
+   * {@inheritdoc}
+   */
+  protected $defaults = [
+    // Human readable label for icon.
+    'label' => '',
+    // The plugin id. Set by the plugin system based on the symbol ID attribute.
+    'id' => '',
+    // Width of the icon.
+    'width' => 1,
+    // Height of the icon.
+    'height' => 1,
+    // URL of the icon.
+    'url' => '',
+    // Default class for icon implementations.
+    'class' => 'Drupal\ex_icons\ExIcon',
+  ];
+
+  /**
+   * The inline defs markup keyed by provider.
    *
-   * @var \Drupal\Core\Cache\CacheBackendInterface
+   * @var string[]|null
    */
-  protected $cache;
+  protected $inlineDefs;
 
   /**
-   * A config object for the icons configuration.
+   * Instantiated plugin instances.
    *
-   * @var \Drupal\Core\Config\Config
+   * @var \Drupal\ex_icons\ExIconInterface[]
    */
-  protected $config;
+  protected $instances = [];
 
   /**
-   * The set of icon data.
+   * The object that discovers plugins managed by this manager.
    *
-   * @var array
+   * @var \Drupal\ex_icons\Plugin\Discovery\SvgSymbolDiscoveryInterface
    */
-  protected $data;
+  protected $discovery;
 
   /**
-   * Constructs a ExIconsManager object.
+   * The theme handler.
    *
-   * @param \Drupal\Core\Cache\CacheBackendInterface $cache
-   *   Cache backend.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   A config factory for retrieving required config objects.
+   * @var \Drupal\Core\Extension\ThemeHandlerInterface
    */
-  public function __construct(CacheBackendInterface $cache, ConfigFactoryInterface $config_factory) {
-    $this->cache = $cache;
-    $this->config = $config_factory->get('ex_icons.settings');
+  protected $themeHandler;
+
+  /**
+   * Constructs a new ExIconsManager instance.
+   *
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Drupal\Core\Extension\ThemeHandlerInterface $theme_handler
+   *   The theme handler.
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
+   *   The cache backend.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation service.
+   */
+  public function __construct(ModuleHandlerInterface $module_handler, ThemeHandlerInterface $theme_handler, CacheBackendInterface $cache_backend, TranslationInterface $string_translation) {
+    $this->factory = new ContainerFactory($this);
+    $this->moduleHandler = $module_handler;
+    $this->themeHandler = $theme_handler;
+    $this->setStringTranslation($string_translation);
+    $this->alterInfo('ex_icons');
+    $this->setCacheBackend($cache_backend, 'ex_icons', ['ex_icons']);
+  }
+
+  /**
+   * Gets the plugin discovery.
+   *
+   * @return \Drupal\ex_icons\Plugin\Discovery\SvgSymbolDiscoveryInterface
+   *   The plugin discovery.
+   */
+  protected function getDiscovery() {
+    if (!isset($this->discovery)) {
+      $this->discovery = new SvgSymbolDiscovery(
+        self::BASENAME,
+        $this->moduleHandler->getModuleDirectories()
+        + $this->themeHandler->getThemeDirectories()
+      );
+      $this->discovery->addTranslatableProperty('label');
+      $this->discovery = new ContainerDerivativeDiscoveryDecorator($this->discovery);
+    }
+
+    return $this->discovery;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getIcons() {
-    if (!isset($this->data)) {
-      $this->discoverIconData();
-    }
+  protected function providerExists($provider) {
+    return $this->moduleHandler->moduleExists($provider) || $this->themeHandler->themeExists($provider);
+  }
 
-    return $this->data['icons'];
+  /**
+   * {@inheritdoc}
+   */
+  public function clearCachedDefinitions() {
+    parent::clearCachedDefinitions();
+    $this->inlineDefs = NULL;
+    $this->instances = [];
   }
 
   /**
    * {@inheritdoc}
    */
   public function getInlineDefs() {
-    if (!isset($this->data)) {
-      $this->discoverIconData();
+    if (!isset($this->inlineDefs)) {
+      $this->inlineDefs = $this->getDiscovery()->getInlineDefs();
     }
 
-    return $this->data['inline_defs'];
+    return $this->inlineDefs;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSheetUrl() {
-    return file_url_transform_relative(file_create_url($this->config->get('path')));
-  }
+  public function getInstance(array $options) {
+    if (isset($options['id'])) {
+      $id = $options['id'];
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getHash() {
-    if (!isset($this->data)) {
-      $this->discoverIconData();
-    }
-
-    return $this->data['hash'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function rebuild() {
-    $this->cache->delete(self::CACHE_ID);
-  }
-
-  /**
-   * Discovers the icon data from the sprite sheet file.
-   *
-   * @return array
-   *   The set of icon data.
-   */
-  protected function discoverIconData() {
-    $data = [
-      'icons' => [],
-      'inline_defs' => '',
-      'hash' => '',
-    ];
-
-    if ($cache = $this->cache->get(self::CACHE_ID)) {
-      $data = $cache->data;
-    }
-    else {
-      $sheet = $this->config->get('path');
-      if ($sheet && file_exists($sheet)) {
-        $dom = new \DOMDocument();
-        $dom->load($sheet);
-
-        foreach ($dom->getElementsByTagName('symbol') as $symbol) {
-          // Skip symbols without ID attribute.
-          if (!$symbol->hasAttribute('id')) {
-            continue;
-          }
-
-          $id = $symbol->getAttribute('id');
-          $viewbox = explode(' ', $symbol->getAttribute('viewBox'));
-
-          // Attempt to extract a text representation from a title element.
-          $title = $symbol
-            ->getElementsByTagName('title')
-            ->item(0);
-
-          $data['icons'][$id] = [
-            'width'  => $viewbox[2],
-            'height' => $viewbox[3],
-            'title' => $title ? $title->nodeValue : str_replace('-', ' ', ucfirst($id)),
-          ];
-        }
-
-        foreach ($dom->getElementsByTagName('defs') as $def) {
-          $data['inline_defs'] .= $dom->saveXML($def);
-        }
-
-        $data['hash'] = substr(hash_file('sha512', $sheet), 0, 16);
-
-        $this->cache->set(self::CACHE_ID, $data, $this->getCacheMaxAge(), $this->getCacheTags());
+      if (!isset($this->instances[$id])) {
+        $this->instances[$id] = $this->createInstance($id);
       }
+
+      return $this->instances[$id];
     }
-
-    $this->data = $data;
-    return $this->data;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
-    return $this->config->getCacheContexts();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheMaxAge() {
-    return CacheBackendInterface::CACHE_PERMANENT;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheTags() {
-    return $this->config->getCacheTags();
+  public function getFallbackPluginId($plugin_id, array $configuration = []) {
+    return 'ex_icon_null';
   }
 
 }
