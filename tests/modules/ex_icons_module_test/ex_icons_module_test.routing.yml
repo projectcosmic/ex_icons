@@ -1,0 +1,7 @@
+ex_icons_module_test.icon_selection:
+  path: '/ex-icons-module-test/icon-selection'
+  defaults:
+    _form: '\Drupal\ex_icons_module_test\Form\ExIconsModuleTestIconSelectionForm'
+    _title: 'Icon selection'
+  requirements:
+    _access: 'TRUE'
