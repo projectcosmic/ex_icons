@@ -87,10 +87,12 @@ class ExIconSelect extends Radios {
    */
   protected static function getOptions() {
     if (!isset(self::$options)) {
-      $definition_ids = array_keys(\Drupal::service('ex_icons.manager')->getDefinitions());
+      $definitions = \Drupal::service('ex_icons.manager')->getDefinitions();
       // Remove the fall-back null icon.
-      unset($definition_ids['ex_icon_null']);
-      self::$options = array_combine($definition_ids, $definition_ids);
+      unset($definitions['ex_icon_null']);
+
+      $values = array_keys($definitions);
+      self::$options = array_combine($values, $values);
     }
 
     return self::$options;

@@ -20,15 +20,10 @@ class ExIconsSelectionTest extends BrowserTestBase {
 
   /**
    * Tests that #type 'ex_icon_select' fields carry values properly.
-   *
-   * Covers:
-   * - ex_icons_preprocess_radios()
-   * - ex_icons_preprocess_form_element_label()
-   * - \Drupal\ex_icons\Element\ExIconSelect
    */
   public function testExIconSelection() {
     $this->drupalGet('ex-icons-module-test/icon-selection');
-    $this->assertSession()->fieldNotExists('ex_icon_null');
+    $this->assertSession()->elementNotExists('css', 'input[value="ex_icon_null"]');
     $this->assertSession()->fieldExists('selection')->selectOption('module-icon');
     $this->getSession()->getPage()->pressButton('Submit');
     $values = Json::decode($this->getSession()->getPage()->getContent());
