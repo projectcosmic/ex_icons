@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 [Unreleased]
 ------------
 
+[2.0.1] - 2019-04-01
+--------------------
+### Fixed
+- Remove null icon plugin from selection elements
+
 [2.0.0] - 2019-03-19
 --------------------
 ### Added
@@ -70,7 +75,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add Icon URL data to JavaScript settings
 - Add defs inline from the sprite sheet
 
-[Unreleased]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/HEAD%250D2.0.0
+[Unreleased]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/HEAD%250D2.0.1
+[2.0.1]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/2.0.1%250D2.0.0
 [2.0.0]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/2.0.0%250D1.2.0
 [1.2.0]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/1.2.0%250D1.1.1
 [1.1.1]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/1.1.1%250D1.1.0
