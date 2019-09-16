@@ -121,7 +121,7 @@ class ExIconDefaultFormatter extends FormatterBase {
 
     foreach ($items as $delta => $item) {
       $classes = array_map(
-        '\Drupal\Component\Utility\HTML::cleanCssIdentifier',
+        '\Drupal\Component\Utility\Html::cleanCssIdentifier',
         explode(' ', $this->getSetting('classes'))
       );
 
