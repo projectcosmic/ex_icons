@@ -14,8 +14,8 @@ use Drupal\Core\Form\FormStateInterface;
  *   label = @Translation("Default"),
  *   field_types = {
  *     "ex_icon",
- *     "text",
  *     "list_string",
+ *     "string",
  *   }
  * )
  */
