@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.0.4] - 2019-12-06
+### Changed
+- Remove text field formatter to string fields
+
 ## [2.0.3] - 2019-09-16
 ### Fixed
 - Fix callback call
@@ -71,7 +75,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add Icon URL data to JavaScript settings
 - Add defs inline from the sprite sheet
 
-[Unreleased]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/HEAD..2.0.3
+[Unreleased]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/HEAD..2.0.4
+[2.0.4]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/2.0.4..2.0.3
 [2.0.3]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/2.0.3..2.0.2
 [2.0.2]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/2.0.2..2.0.1
 [2.0.1]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/2.0.1..2.0.0
