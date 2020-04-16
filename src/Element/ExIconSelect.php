@@ -55,7 +55,7 @@ class ExIconSelect extends Radios {
       $element[$key]['#attributes']['class'][] = 'visually-hidden';
 
       if ($key != '') {
-        $element[$key]['#title'] = [
+        $icon = [
           '#theme' => 'ex_icon',
           '#id' => $key,
           '#attributes' => [
@@ -63,6 +63,7 @@ class ExIconSelect extends Radios {
             'class' => ['icon-selector__icon'],
           ],
         ];
+        $element[$key]['#title'] = \Drupal::service('renderer')->render($icon);
       }
     }
 

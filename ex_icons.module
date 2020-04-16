@@ -74,24 +74,6 @@ function ex_icons_preprocess_radios(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK() for form-element-label.html.twig.
- */
-function ex_icons_preprocess_form_element_label(&$variables) {
-  // If #markup is an array, then check whether it is an SVG icon render array
-  // from ex_icon_select form element.
-  if (
-    // Check if markup is an array.
-    isset($variables['title']['#markup']) &&
-    is_array($variables['title']['#markup']) &&
-    // Check if the array is for an icon.
-    isset($variables['title']['#markup']['#theme']) &&
-    $variables['title']['#markup']['#theme'] == 'ex_icon'
-  ) {
-    $variables['title'] = $variables['title']['#markup'];
-  }
-}
-
-/**
  * Implements hook_page_bottom().
  */
 function ex_icons_page_bottom(array &$page_bottom) {
