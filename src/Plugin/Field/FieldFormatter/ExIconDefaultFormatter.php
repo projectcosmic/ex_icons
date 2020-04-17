@@ -11,7 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
  *
  * @FieldFormatter(
  *   id = "ex_icon_default",
- *   label = @Translation("Default"),
+ *   label = @Translation("Icon"),
  *   field_types = {
  *     "ex_icon",
  *     "list_string",
