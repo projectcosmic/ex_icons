@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fix changelog links
 
 ## [2.0.6] - 2020-04-17
 ### Changed
@@ -83,8 +85,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add Icon URL data to JavaScript settings
 - Add defs inline from the sprite sheet
 
-[Unreleased]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/HEAD..2.0.5
-[2.0.5]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/2.0.5..2.0.4
+[Unreleased]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/HEAD..v2.0.6
+[2.0.6]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/v2.0.6..v2.0.5
+[2.0.5]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/v2.0.5..2.0.4
 [2.0.4]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/2.0.4..2.0.3
 [2.0.3]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/2.0.3..2.0.2
 [2.0.2]: https://bitbucket.org/projectcosmic/ex_icons/branches/compare/2.0.2..2.0.1
