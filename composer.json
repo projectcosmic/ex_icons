@@ -10,5 +10,6 @@
             "role": "Developer"
         }
     ],
-    "license": "MIT"
+    "license": "MIT",
+    "abandoned": "drupal/ex_icons"
 }

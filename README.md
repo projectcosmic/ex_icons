@@ -1,5 +1,8 @@
 # External-use icons
 
+Development has now moved to a drupal.org project at
+https://www.drupal.org/project/ex_icons.
+
 This module helps with integrating [external-use icons](https://css-tricks.com/svg-sprites-use-better-icon-fonts/)
 into Drupal.
 
